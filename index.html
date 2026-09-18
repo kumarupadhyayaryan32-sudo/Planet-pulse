@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PlanetPulse — a carbon footprint intelligence dashboard.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+    <title>PlanetPulse — Carbon Footprint Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= TOP BAR ================= -->
+    <header class="topbar">
+        <div class="topbar-inner">
+
+            <div class="brand">
+                <div class="brand-icon">🌍</div>
+                <div class="brand-text">
+                    <h1>PlanetPulse</h1>
+                    <p>Carbon Footprint Intelligence Dashboard</p>
+                </div>
+            </div>
+
+            <div class="topbar-stats">
+                <div class="topbar-stat">
+                    <span>Total Logged</span>
+                    <strong id="topTotalActivities">0</strong>
+                </div>
+                <div class="topbar-stat">
+                    <span>This Week</span>
+                    <strong id="topWeeklyCO2">0.00 kg</strong>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- ================= OVERVIEW / KPI CARDS ================= -->
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Overview</h2>
+                    <p id="weekRange">This week's carbon footprint</p>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+
+                <div class="kpi-card kpi-primary">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Total Footprint</span>
+                        <span class="kpi-icon">🌎</span>
+                    </div>
+                    <div class="kpi-value">
+                        <span id="totalCO2">0.00</span>
+                        <span class="kpi-unit">kg CO₂</span>
+                    </div>
+                    <p class="kpi-sub">Every small choice makes a difference.</p>
+                </div>
+
+                <div class="kpi-card" data-accent="transport">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Transport</span>
+                        <span class="kpi-icon">🚗</span>
+                    </div>
+                    <p class="kpi-number" id="transportCO2">0.00 kg</p>
+                </div>
+
+                <div class="kpi-card" data-accent="electricity">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Electricity</span>
+                        <span class="kpi-icon">⚡</span>
+                    </div>
+                    <p class="kpi-number" id="electricityCO2">0.00 kg</p>
+                </div>
+
+                <div class="kpi-card" data-accent="food">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Food</span>
+                        <span class="kpi-icon">🍽️</span>
+                    </div>
+                    <p class="kpi-number" id="foodCO2">0.00 kg</p>
+                </div>
+
+            </div>
+
+            <div class="mini-stats">
+                <div>
+                    <span>Activities</span>
+                    <strong id="totalActivities">0</strong>
+                </div>
+                <div>
+                    <span>This Week</span>
+                    <strong id="weeklyActivities">0</strong>
+                </div>
+                <div>
+                    <span>Average / Activity</span>
+                    <strong id="averageCO2">0 kg</strong>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= CHARTS ================= -->
+        <section class="chart-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Emissions Analysis</h2>
+                    <p>Category share and activity-level comparison.</p>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+
+                <!-- Donut: category share -->
+                <div class="chart-card">
+                    <h3 class="chart-card-title">By Category</h3>
+                    <p class="chart-card-subtitle">Share of total emissions</p>
+
+                    <div class="donut-wrapper">
+
+                        <div class="donut-chart" id="donutChart">
+                            <div class="donut-hole">
+                                <span id="donutTotal">0.00</span>
+                                <small>kg CO₂</small>
+                            </div>
+                        </div>
+
+                        <div class="donut-legend">
+                            <div class="legend-item">
+                                <span class="dot dot-transport"></span>
+                                Transport
+                                <strong id="legendTransport">0%</strong>
+                            </div>
+                            <div class="legend-item">
+                                <span class="dot dot-electricity"></span>
+                                Electricity
+                                <strong id="legendElectricity">0%</strong>
+                            </div>
+                            <div class="legend-item">
+                                <span class="dot dot-food"></span>
+                                Food
+                                <strong id="legendFood">0%</strong>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- New: Activity Comparison Bar Chart -->
+                <div class="chart-card chart-card-wide">
+                    <h3 class="chart-card-title">Activity Comparison</h3>
+                    <p class="chart-card-subtitle">CO₂ emissions (kg) by activity type</p>
+
+                    <div id="activityBarChart" class="bar-chart-container"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= WEEKLY TARGET ================= -->
+        <section class="target-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Weekly Target</h2>
+                    <p>Keep your footprint within your goal.</p>
+                </div>
+            </div>
+
+            <div class="target-card">
+
+                <div class="target-input">
+                    <label for="weeklyTarget">Set your weekly CO₂ target</label>
+
+                    <div class="input-row">
+                        <input type="number" id="weeklyTarget" placeholder="Example: 50" min="1" step="0.1">
+                        <button id="saveTarget">Set Target</button>
+                    </div>
+                </div>
+
+                <div class="target-status-row">
+                    <p id="targetStatus">Set a weekly target to start tracking.</p>
+                    <span id="targetPercentage">0%</span>
+                </div>
+
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SMART INSIGHTS ================= -->
+        <section class="insights-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Smart Suggestions</h2>
+                    <p>Personalized tips to lower your footprint.</p>
+                </div>
+            </div>
+
+            <div id="insightsCard" class="insights-card">
+                <span class="insights-badge">INSIGHT</span>
+                <p>Log a few activities to get personalized suggestions.</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= LOG ACTIVITY ================= -->
+        <section class="activity-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Log an Activity</h2>
+                    <p>Record an activity to calculate its carbon impact.</p>
+                </div>
+            </div>
+
+            <div class="form-card">
+
+                <form id="activityForm">
+
+                    <div class="form-group">
+                        <label for="activityType">Activity</label>
+                        <select id="activityType" required>
+                            <option value="">Select activity</option>
+                            <option value="car">🚗 Car</option>
+                            <option value="bus">🚌 Bus</option>
+                            <option value="flight">✈️ Flight</option>
+                            <option value="electricity">⚡ Electricity</option>
+                            <option value="veg-meal">🥗 Veg Meal</option>
+                            <option value="nonveg-meal">🍗 Non-Veg Meal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <div class="quantity-wrapper">
+                            <input type="number" id="quantity" placeholder="Enter quantity" min="0.1" step="0.1" required>
+                            <span id="quantityUnit">—</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="add-button">+ Add Activity</button>
+
+                </form>
+
+                <div id="calculationResult" class="calculation-result"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= HISTORY ================= -->
+        <section class="history-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Activity History</h2>
+                    <p>Review everything you've logged.</p>
+                </div>
+
+                <div class="history-actions">
+                    <button id="loadDemo" class="secondary-button">Load Demo Data</button>
+                    <button id="exportData" class="secondary-button">Export CSV</button>
+                    <button id="clearData" class="danger-button">Clear All</button>
+                </div>
+            </div>
+
+            <div class="filters">
+
+                <div>
+                    <label for="filterType">Activity</label>
+                    <select id="filterType">
+                        <option value="all">All Activities</option>
+                        <option value="car">🚗 Car</option>
+                        <option value="bus">🚌 Bus</option>
+                        <option value="flight">✈️ Flight</option>
+                        <option value="electricity">⚡ Electricity</option>
+                        <option value="veg-meal">🥗 Veg Meal</option>
+                        <option value="nonveg-meal">🍗 Non-Veg Meal</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="filterDate">Date</label>
+                    <input type="date" id="filterDate">
+                </div>
+
+                <button id="clearFilters" class="clear-button" type="button">Reset Filters</button>
+
+            </div>
+
+            <div id="historyList">
+                <div class="empty-state">
+                    <div class="empty-icon">🌱</div>
+                    <h3>No activities yet</h3>
+                    <p>Start logging your activities to see your carbon footprint.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <p>PlanetPulse — Carbon Footprint Intelligence Dashboard</p>
+        <p class="footer-small">Track · Analyze · Reduce</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
